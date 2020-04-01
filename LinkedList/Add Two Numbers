@@ -1,4 +1,55 @@
-https://leetcode.com/problems/add-two-numbers/
+1. https://leetcode.com/problems/add-two-numbers/
 You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order 
 and each of their nodes contain a single digit. Add the two numbers and return it as a linked list.
-https://leetcode.com/problems/add-two-numbers-ii/
+Input: (2 -> 4 -> 3) + (5 -> 6 -> 4)
+Output: 7 -> 0 -> 8
+
+Solution:
+Traverse both lists and One by one pick nodes of both lists and add the values. 
+If the sum is more than 10 then make carry as 1 and reduce sum. 
+If one list has more elements, then consider remaining values of another list as 0.
+Time: O(n+m)
+Space: O(1)
+
+
+2. https://leetcode.com/problems/add-two-numbers-ii/
+The most significant digit comes first and each of their nodes contain a single digit.
+Input: (7 -> 2 -> 4 -> 3) + (5 -> 6 -> 4)
+Output: 7 -> 8 -> 0 -> 7
+
+Edge cases:
+1) Both lists are empty
+2) One list is empty
+
+Requirement: Space complexity is O(1)
+Solution:
+Reverse both lists, add the nodes of both lists iteratively, then reverse the resultant list.
+
+ListNode* reverse(ListNode* node, ListNode* pre) {
+        if (node == NULL) return NULL;
+        ListNode* next = node;
+        if (node->next) next = reverse(node->next, node);
+        node->next = pre;
+        return next;
+    }
+    
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        if (l1 == NULL) return l2;
+        if (l2 == NULL) return l1;
+        l1 = reverse(l1, NULL), l2 = reverse(l2, NULL);
+        int carry = 0;
+        ListNode* dump = new ListNode(-1);
+        ListNode* p = dump;
+        while (l1 || l2) {
+            int v1 = 0;
+            if (l1) v1 = l1->val, l1 = l1->next;
+            int v2 = 0;
+            if (l2) v2 = l2->val, l2 = l2->next;
+            int sum = v1 + v2 + carry;
+            p->next = new ListNode(sum%10);
+            carry = sum/10;
+            p = p->next;
+        }
+        if (carry) p->next = new ListNode(carry);
+        return reverse(dump->next, NULL);
+    }
