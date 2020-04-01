@@ -1,0 +1,42 @@
+https://leetcode.com/problems/remove-nth-node-from-end-of-list/
+Given a linked list, remove the n-th node from the end of list and return its head.
+Input: 1->2->3->4->5, and n = 2.
+Outpt: 1->2->3->5.
+
+Requirement: Do it in one pass, Time: O(N), Space: O(1)
+
+Edge cases:
+1) n is nagative
+2) elements in list is less than n
+3) list is empty
+4) the n-th node is the first node from the beginning.
+
+Solution:
+Take two pointers, p point to the head of the linked list and q point to the Nth node from the beginning.
+Now keep increment both the pointers by one at the same time until q is pointing to the last node.
+After that, p should be pointing to the Nth node from the end by now. So, delete the node where p is pointing to.
+
+ ListNode* removeNthFromEnd(ListNode* head, int n) {
+        if (head == NULL)
+            return NULL;
+        ListNode *p = head;
+        ListNode *q = head;
+        int c = 0;
+        while (c < n) {
+            if (q->next == NULL) {
+                if (c == n-1)
+                    head = head->next;
+                return head;
+            }
+            q = q->next;
+            c++;
+        }
+        while (q->next) {
+            p = p->next;
+            q = q->next;
+        }
+        p->next = p->next->next;
+        if (head == NULL)
+            head = p;
+        return head;
+    }
