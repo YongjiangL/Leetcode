@@ -31,6 +31,10 @@ Input:
   2->6
 ]
 Output: 1->1->2->3->4->4->5->6
+Edge Cases:
+1) k is zero
+2) some lists are NULL
+
 
 Solution1 (minHeap), 
 Time: O(N logk), k is the number of lists
