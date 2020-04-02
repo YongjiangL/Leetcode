@@ -1,0 +1,6 @@
+https://leetcode.com/problems/longest-palindromic-substring/
+Given a string s, find the longest palindromic substring in s. 
+Input: "babad"
+Output: "bab"
+
+https://leetcode.com/discuss/general-discussion/491522/dynamic-programming-questions-thread
