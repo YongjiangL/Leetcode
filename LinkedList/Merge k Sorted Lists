@@ -7,6 +7,7 @@ Output: 1->1->2->3->4->4
 Questions: Not copy nodes to new list, join existing nodes. 
 Time: O(N+M), 
 Space: O(1)
+Solution:
 ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
         ListNode* dump = new ListNode(-1);
         ListNode* p = dump;
@@ -30,4 +31,45 @@ Input:
   2->6
 ]
 Output: 1->1->2->3->4->4->5->6
+
+Solution1 (minHeap), 
+Time: O(N logk), k is the number of lists
+Space: O(k)
+
+struct Cmp {
+    bool operator()(const ListNode* n1, const ListNode* n2) const {
+        return n1->val > n2->val;
+    }
+    };
+   
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        if (lists.empty())
+            return NULL;
+        
+        priority_queue<ListNode*, vector<ListNode*>, Cmp> pq;
+        int k = lists.size();
+        for (int i = 0; i < k; i++)
+            if (lists[i] != NULL) 
+                pq.push(lists[i]);
+        ListNode* dump = new ListNode(-1);
+        ListNode* p = dump;
+        while (!pq.empty()) {
+            ListNode* q = pq.top();
+            pq.pop();
+            p->next = q;
+            if (q->next != NULL)
+                pq.push(q->next);
+            p = p->next;
+        }
+        return dump->next;
+    }
+
+Solution2: Merge with Divide and Conquer
+Space: O(1), don't need extra space
+Time: O(N logk)
+
+Idea: The idea is to pair up K lists and merge each pair in linear time using O(1) space. 
+We repeat the procedure until we have only one list left.
+
+
 
