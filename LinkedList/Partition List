@@ -1,0 +1,32 @@
+https://leetcode.com/problems/partition-list/
+Given a linked list and a value x, partition it such that all nodes less than x come before nodes greater than or equal to x.
+You should preserve the original relative order of the nodes in each of the two partitions.
+
+Input: head = 1->4->3->2->5->2, x = 3
+Output: 1->2->2->4->3->5
+
+Edge cases:
+1) list is empty
+2) all nodes less than x
+3) all nodes greater than x
+
+Solution: Time: O(N), Space: O(1)
+We can take two pointers less and great to keep track of the two linked lists. 
+These two pointers point to two separate lists and then these lists could be combined to form the desired reformed list.
+
+ListNode* partition(ListNode* head, int x) {
+        if (head == NULL) return head;
+        ListNode *dump1 = new ListNode(-1), *dump2 = new ListNode(-1);
+        ListNode* less = dump1, *great = dump2;
+        ListNode* p = head;
+        while (p) {
+            if (p->val < x)
+                less->next = p, less = less->next;
+            else
+                great->next = p, great = great->next;
+            p = p->next;
+        }
+        less->next = dump2->next;
+        great->next = NULL;
+        return dump1->next;
+    }
