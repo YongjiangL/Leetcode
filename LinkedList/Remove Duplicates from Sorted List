@@ -23,7 +23,8 @@ Edge cases:
 3) No element is duplicate
 
 Solution: Time: O(N), Space: O(1)
-The idea is to maintain a pointer (prev) to the node which just previous to the block of nodes we are checking for duplicates.
+The idea is to maintain a pre point to the node, which just previous to the block of nodes we are checking for duplicates.
+
 ListNode* deleteDuplicates(ListNode* head) {
         ListNode* dump = new ListNode(-1);
         dump->next = head;
