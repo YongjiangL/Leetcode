@@ -1,0 +1,42 @@
+1)
+https://leetcode.com/problems/remove-duplicates-from-sorted-list/
+Given a sorted linked list, delete all duplicates such that each element appear only once.
+Input: 1->1->2->3->3
+Output: 1->2->3
+
+Solution: Time: O(N), Space: O(1)
+Traverse the list from the head node. 
+While traversing, compare each node with its next node. If data of next node is same as current node, ignore it, 
+and we need to store next pointer of the node.
+
+
+2)
+https://leetcode.com/problems/remove-duplicates-from-sorted-list-ii/
+Given a sorted linked list, delete all nodes that have duplicate numbers, leaving only distinct numbers from the original list.
+Return the linked list sorted as well.
+Input: 1->2->3->3->4->4->5
+Output: 1->2->5
+
+Edge cases:
+1) List is empty
+2) All elements are duplicate
+3) No element is duplicate
+
+Solution: Time: O(N), Space: O(1)
+The idea is to maintain a pointer (prev) to the node which just previous to the block of nodes we are checking for duplicates.
+ListNode* deleteDuplicates(ListNode* head) {
+        ListNode* dump = new ListNode(-1);
+        dump->next = head;
+        ListNode* pre = dump;
+        ListNode* cur = head;
+        while (cur) {
+            while (cur->next && pre->next->val == cur->next->val)
+                cur = cur->next;
+            if (pre->next == cur)
+                pre = pre->next;
+            else
+                pre->next = cur->next;
+            cur = cur->next;
+        }
+        return dump->next;
+    }
