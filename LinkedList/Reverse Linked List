@@ -1,0 +1,85 @@
+1)
+https://leetcode.com/problems/reverse-linked-list/
+Reverse a singly linked list.
+
+Input: 1->2->3->4->5->NULL
+Output: 5->4->3->2->1->NULL
+Solution: Time: O(N), Space: O(1)
+Recursion
+ListNode* reverse(ListNode* node, ListNode *pre) {
+        ListNode *next = node;
+        if (node->next)
+            next = reverse(node->next, node);
+        node->next = pre;
+        return next;
+    }
+Iteration:
+ListNode* reverseList(ListNode* head) {
+        if (head == NULL) return head;
+        ListNode *pre = NULL;
+        while (head->next) {
+            ListNode *next = head->next;
+            head->next = pre;
+            pre = head;
+            head = next;
+        }
+        head->next = pre;
+        return head;
+    }
+
+
+2)
+https://leetcode.com/problems/reverse-linked-list-ii/
+Reverse a linked list from position m to n. Do it in one-pass.
+
+Input: 1->2->3->4->5->NULL, m = 2, n = 4
+Output: 1->4->3->2->5->NULL
+
+Edge cases:
+list is empty
+m >= n
+m or n is nagative
+m is zero
+m > N, N is elements number in list
+n > N
+
+Solution: Time: O(N), Space: O(1)
+Idea: We create a dump start node, use cur point to the end of the new list.
+We keep processing the old list using head pointer, until head reaches the m-th node from the start.
+Then we start reversing the old list, until we reaches the n-th node.
+We use pre points  the start of the reversed list, end points to the end of the reversed list. 
+After that, let cur->next = pre, cur = end. 
+Continue process the remaining old list.
+
+ListNode* reverseBetween(ListNode* head, int m, int n) {
+        if (head == NULL) return head;
+        int c = 1;
+        ListNode *dump = new ListNode(-1);
+        ListNode *cur = dump;
+        while (head) {
+            if (c == m) {
+                ListNode* end = head;
+                ListNode* pre = NULL;
+                while (c <= n && head) {
+                    c++;
+                    ListNode* next = head->next;
+                    head->next = pre;
+                    pre = head;
+                    head = next;
+                }
+                cur->next = pre;
+                cur = end;
+                continue;
+            }
+            c++;
+            cur->next = head;
+            head = head->next;
+            cur = cur->next;
+        }
+        
+        return dump->next;
+    }
+
+
+
+
