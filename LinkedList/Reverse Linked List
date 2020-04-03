@@ -17,14 +17,13 @@ Iteration:
 ListNode* reverseList(ListNode* head) {
         if (head == NULL) return head;
         ListNode *pre = NULL;
-        while (head->next) {
+        while (head) {
             ListNode *next = head->next;
             head->next = pre;
             pre = head;
             head = next;
         }
-        head->next = pre;
-        return head;
+        return pre;
     }
 
 
