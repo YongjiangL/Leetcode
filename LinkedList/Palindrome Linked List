@@ -1,0 +1,94 @@
+1)
+https://leetcode.com/problems/palindrome-linked-list/
+Given a singly linked list, determine if it is a palindrome.
+Input: 1->2
+Output: false
+
+Follow-up: do it in O(N) time and O(1) space.
+
+Edge cases:
+list is empty
+list has one element
+list has odd number of elements
+list has even number of elements
+
+Solution: Time: O(N), Space: O(N), which is the Function call stack size.
+Recursion, 
+The idea is to use function call stack as container. Recursively traverse till the end of list. 
+When we return , we will be at last node. The last node to be compared with first node of list.
+
+bool helper(ListNode* &left, ListNode* right) {
+        if (right == NULL) return true;
+        bool is = helper(left, right->next);
+        if (!is) return false;
+        if (left->val != right->val) 
+            return false;
+        left = left->next;
+        return true;
+    }
+    
+    bool isPalindrome(ListNode* head) {
+        if (head == NULL || head->next == NULL) return true;
+        return helper(head, head);
+    }
+
+Reverse Second Half In-place, Time: O(N), Space: O(1)
+Idea:
+Find the end of the first half, Reverse the second half.
+Determine whether or not there is a palindrome.
+
+ bool isPalindrome(ListNode* head) {
+        if (head == NULL || head->next == NULL) return true;
+        ListNode* firstEnd = getFirstHalfEnd(head);
+        ListNode* secondStart = reverse(firstEnd->next);
+        ListNode* p= head, *q = secondStart;
+        while (p && q) {
+            if (p->val != q->val)
+                return false;
+            p = p->next;
+            q = q->next;
+        }   
+        return true;
+    }
+
+
+
+2)
+https://www.geeksforgeeks.org/length-longest-palindrome-list-linked-list-using-o1-extra-space/?ref=rp
+Given a linked list, find length of the longest palindrome list that exist in that linked list.
+
+A simple solution is copy linked list to an array.
+The idea is based on iterative linked list reverse. 
+We iterate through given linked list, reverse every prefix of linked list from left. 
+After reversing a prefix, let this prefix as middle point, find the common list.
+Time: O(N^2)
+Space: O(1)
+
+int countCommon(ListNode *a, ListNode *b) 
+{ 
+    int count = 0; 
+    for (; a && b; a = a->next, b = b->next) 
+        if (a->data == b->data) 
+            ++count; 
+        else
+            break; 
+    return count; 
+} 
+ 
+int maxPalindrome(ListNode *head) 
+{ 
+    int result = 0; 
+    ListNode *prev = NULL, *curr = head; 
+    while (curr) 
+    { 
+        Node *next = curr->next; 
+        curr->next = prev; 
+        result = max(result, 
+                     2*countCommon(prev, next)+1); 
+        result = max(result, 
+                     2*countCommon(curr, next)); 
+        prev = curr; 
+        curr = next; 
+    } 
+    return result; 
+} 
