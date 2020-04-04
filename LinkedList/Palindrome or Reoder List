@@ -1,4 +1,4 @@
-1)
+1.
 https://leetcode.com/problems/palindrome-linked-list/
 Given a singly linked list, determine if it is a palindrome.
 Input: 1->2
@@ -51,9 +51,75 @@ Determine whether or not there is a palindrome.
         return true;
     }
 
+2. https://leetcode.com/problems/reorder-list/
+Given a singly linked list L: L0→L1→…→Ln-1→Ln,
+reorder it to: L0→Ln→L1→Ln-1→L2→Ln-2→…
+Input:  1->2->3->4->5, 
+Output: 1->5->2->4->3.
+
+Follow-up: do it in O(N) time and O(1) space.
+Edge cases:
+list is empty
+list has one element
+list has odd number of elements
+list has even number of elements
+
+Solution: We can use the same strategy as checking palindrome.
+1) Recursion:
+void reorder(ListNode *&left, ListNode* right) {
+        if (right == NULL) return;
+        reorder(left, right->next);
+        if (left->next == NULL)
+            return;
+        //both not meet
+        if (left != right && left->next != right) {
+             ListNode* next = left->next;
+            left->next = right;
+            right->next = next;
+            left = next;   
+        }
+        else {
+            if (left != right)
+                left = left->next;
+            left->next = NULL;
+        }
+    }
+ 2) Iteration:
+  ListNode* reverse(ListNode* node) {
+        ListNode* pre = NULL;
+        while (node) {
+            ListNode* next = node->next;
+            node->next = pre;
+            pre = node;
+            node = next;
+        }
+        return pre;
+    }
+    
+    ListNode *middle(ListNode* node) {
+        ListNode* fast = node;
+        while (fast && fast->next) {
+            node = node->next;
+            fast = fast->next->next;
+        }
+        return node;
+    }
+    
+    void reorderList(ListNode* head) {
+        if (head == NULL || head->next == NULL) return;
+        ListNode *mid = middle(head);
+        ListNode *rev = reverse(mid);
+        while (head && head->next) {
+            ListNode *next = head->next;
+            head->next = rev;
+            head = head->next;
+            rev = next;
+        }
+    }
 
 
-2)
+
+3.
 https://www.geeksforgeeks.org/length-longest-palindrome-list-linked-list-using-o1-extra-space/?ref=rp
 Given a linked list, find length of the longest palindrome list that exist in that linked list.
 
