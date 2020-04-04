@@ -1,0 +1,83 @@
+1.
+https://leetcode.com/problems/linked-list-cycle/
+Given a linked list, determine if it has a cycle in it.
+Input: head = [3,2,0,-4], pos = 1
+Output: true
+
+Follow up: do it using O(1) memory.
+Edge cases:
+1) list is empty
+2) only 1 node, has a cycle
+3) many nodes, one node has a cycle points to itself
+
+Solution: 
+Traverse linked list using two pointers. 
+Move one pointer(slow) by one and another pointer(fast) by two. 
+If these pointers meet at the same node then there is a loop. If pointers do not meet then linked list doesn’t have a loop
+bool hasCycle(ListNode *head) {
+        ListNode* slow = head, *fast = head;
+        while (slow && fast && fast->next) {
+            slow = slow->next;
+            fast = fast->next->next;
+            if (slow == fast)
+                return true;
+            
+        }
+        return false;
+    }
+
+2. 
+https://leetcode.com/problems/linked-list-cycle-ii/
+Given a linked list, return the node where the cycle begins. If there is no cycle, return null.
+Input: head = [3,2,0,-4], pos = 1
+Output: tail connects to node index 1
+
+Follow up: do it using O(1) memory.
+Edge cases:
+1) list is empty
+2) only 1 node, has a cycle
+3) many nodes, one node has a cycle points to itself
+
+Solution:
+1) use hashing to detect the first node of loop.
+We iterate the whole linked list, and store node in a set one by one. Before we store it, we check if it is in set, if yes, 
+then we find the start node.
+ ListNode *detectCycle(ListNode *head) {
+        unordered_set<ListNode*> us;
+        while (head) {
+            if (us.count(head))
+                return head;
+            us.insert(head);
+            head = head->next;
+        }
+        return NULL;
+    }
+
+2) Floyd’s Cycle-Finding Algorithm
+Idea: 
+If a loop is found, initialize slow pointer to head, let fast pointer be at its position.
+Move both slow and fast pointers one node at a time.
+When they meet, it is the start of the loop.
+The reason is, assume there is n nodes in loop, m nodes from head to the start of loop, fast is at a node in loop where distance is k to the start of loop.
+(m+k) is muliples of n.
+
+ ListNode *detectCycle(ListNode *head) {
+        if (head == NULL) return NULL;
+        ListNode* slow = head, *fast = head;
+        while(1) {
+            slow = slow->next;
+            if (fast && fast->next)
+                fast = fast->next->next;
+            else
+                return NULL;
+            if (slow == fast)
+                break;
+        }
+        if (slow != fast) return NULL;
+        slow = head;
+        while (slow != fast) {
+            slow = slow->next;
+            fast = fast->next;
+        }
+        return slow;
+    }
