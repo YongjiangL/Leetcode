@@ -4,7 +4,13 @@ Sort a linked list in O(n log n) time using constant space complexity.
 Input: 4->2->1->3
 Output: 1->2->3->4
 
-
+Solution: QuickSort
+In partition(), we consider last element as pivot. 
+We vist the current list and if a node has value greater than pivot, we move it after tail. 
+If the node has smaller value, we keep it at its current position.
+In QuickSort, we first call partition() which places pivot at correct position and returns pivot. 
+After pivot is placed at correct position, we find tail node of left side (list before pivot) and recur for left list. 
+Finally, we recur for right list.
 
 
 
