@@ -1,0 +1,36 @@
+https://leetcode.com/problems/design-phone-directory/
+Design a Phone Directory which supports the following operations:
+1) get: Provide a number which is not assigned to anyone.
+2) check: Check if a number is available or not.
+3) release: Recycle or release a number.
+
+ unordered_map<int,bool> hash;
+    queue<int> pool;
+    
+    PhoneDirectory(int n) {
+        for (int i = 0; i < n; i++)
+            pool.push(i);
+    }
+    
+    /** Provide a number which is not assigned to anyone.
+        @return - Return an available number. Return -1 if none is available. */
+    int get() {
+        if (pool.empty())
+            return -1;
+        int v = pool.front();
+        pool.pop();
+        hash[v] = true;
+        return v;
+    }
+    
+    /** Check if a number is available or not. */
+    bool check(int number) {
+        return hash.count(number) ? !hash[number]:true;
+    }
+    
+    /** Recycle or release a number. */
+    void release(int number) {
+        if (check(number)) return;
+        hash[number] = false;
+        pool.push(number);
+    }
