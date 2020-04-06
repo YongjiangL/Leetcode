@@ -4,7 +4,50 @@ Sort a linked list in O(n log n) time using constant space complexity.
 Input: 4->2->1->3
 Output: 1->2->3->4
 
-Solution: QuickSort
+Edge cases:
+1) list is empty
+2) list has 1 element
+3) list has 2 elements
+
+Solution: 
+1) MergeSort
+Divide the linked list into two halves, Sort the two halves, merge the two halves.
+void split(ListNode* head, ListNode **first, ListNode **second) {
+        ListNode *slow = head, *fast = head;
+        while (fast && fast->next && fast->next->next) {
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+        *first = head;
+        *second = slow->next;
+        slow->next = NULL;
+    }
+    
+    ListNode* merge(ListNode* first, ListNode* second) {
+        ListNode *head = new ListNode(-1);
+        ListNode *p = head;
+        while (first && second) {
+            if (first->val < second->val)
+                p->next = first, first = first->next;
+            else
+                p->next = second, second = second->next;
+            p = p->next;
+        }
+        p->next = first ? first:second;
+        return head->next;
+    }
+    
+    ListNode* sortList(ListNode* head) {
+        if (!head || !head->next) return head;
+        ListNode *first = NULL, *second = NULL;
+        split(head, &first, &second);
+        first = sortList(first);
+        second = sortList(second);
+        return merge(first, second);
+    }
+
+
+2) QuickSort
 In partition(), we consider last element as pivot. 
 We vist the current list and if a node has value greater than pivot, we move it after tail. 
 If the node has smaller value, we keep it at its current position.
@@ -12,7 +55,57 @@ In QuickSort, we first call partition() which places pivot at correct position a
 After pivot is placed at correct position, we find tail node of left side (list before pivot) and recur for left list. 
 Finally, we recur for right list.
 
-
+ListNode* partition(ListNode *head, ListNode* tail, ListNode *&newH, ListNode *&newT) {
+        ListNode* pivot = tail;
+        ListNode *cur = head, *end = pivot, *pre = NULL;
+        while (cur != pivot) {
+            if (cur->val < pivot->val) {
+                if (newH == NULL) newH = cur;
+                pre = cur;
+                cur = cur->next;
+            }
+            else {
+                if (pre) pre->next = cur->next;
+                ListNode* next = cur->next;
+                end->next = cur;
+                end = cur;
+                cur = next;
+            }
+        }
+        end->next = NULL;
+        if (!newH)
+            newH = pivot;
+        newT = end;
+        return pivot;
+    }
+    
+    ListNode* getTail(ListNode* head) {
+        while (head && head->next) 
+            head = head->next;
+        return head;
+    }
+    
+    ListNode *sort(ListNode *head, ListNode* tail) {
+        if (!head || head == tail) return head;
+        ListNode* newH = NULL, *newT = NULL;
+        ListNode* pivot = partition(head, tail, newH, newT);
+        if (newH != pivot) {
+            ListNode* tmp = newH;
+            while (tmp->next != pivot)
+                tmp = tmp->next;
+            tmp->next = NULL;
+            newH = sort(newH, tmp);
+            tmp = getTail(newH);
+            tmp->next = pivot;
+        }
+        pivot->next = sort(pivot->next, newT);
+        return newH;
+    }
+    
+    ListNode* sortList(ListNode* head) {
+        if (head == NULL || head->next == NULL) return head;
+        return sort(head, getTail(head));
+    }
 
 2.
 https://leetcode.com/problems/insertion-sort-list/
