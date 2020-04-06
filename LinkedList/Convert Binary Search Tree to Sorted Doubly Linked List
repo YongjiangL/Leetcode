@@ -13,6 +13,7 @@ Output: [1,2,3,4,5]
 The idea is do inorder traversal of the binary tree. While doing inorder traversal, 
 keep track of the previously visited node as last.
 For every visited node, we do {node->left = last, last->right = node;}
+Finally, link nodes first and last to close DLL ring and then return the first node.
 
 Node *first, *last; 
     void buildDLL(Node* node) {
