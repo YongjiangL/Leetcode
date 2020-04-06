@@ -3,6 +3,12 @@ Design a Phone Directory which supports the following operations:
 1) get: Provide a number which is not assigned to anyone.
 2) check: Check if a number is available or not.
 3) release: Recycle or release a number.
+// Init a phone directory containing a total of 3 numbers: 0, 1, and 2.
+PhoneDirectory directory = new PhoneDirectory(3);
+
+Solution:
+Use queue<int> to obtain all available numbers, use map<int,bool> to track whether number is available.
+Time: O(1)
 
  unordered_map<int,bool> hash;
     queue<int> pool;
