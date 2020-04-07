@@ -176,4 +176,24 @@ vector<vector<int>> fourSum(vector<int>& nums, int target) {
         return res;
     }
  
+ 6. https://leetcode.com/problems/4sum-ii/
+ Given four lists A, B, C, D of integer values, compute how many tuples (i, j, k, l) 
+ there are such that A[i] + B[j] + C[k] + D[l] is zero.
+To make problem a bit easier, all A, B, C, D have same length of N.
+
+ Solution: Time, O(N^2)
+ int fourSumCount(vector<int>& A, vector<int>& B, vector<int>& C, vector<int>& D) {
+        int cnt = 0;
+        unordered_map<int,int> hash(A.size()*A.size()*2);
+        for (int a:A)
+            for (int b:B)
+                hash[a+b]++;
+        for (int c:C)
+            for (int d:D) {
+                auto it = hash.find(-c-d);
+                if (it != hash.end())
+                    cnt += it->second;
+            }
+        return cnt;
+    }
  
