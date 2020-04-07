@@ -1,0 +1,185 @@
+1. https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/
+Given an array of integers that is already sorted in ascending order, find two numbers such that they add up to a specific target number.
+The function twoSum should return indices of the two numbers such that they add up to the target, where index1 must be less than index2.
+Input: numbers = [2,7,11,15], target = 9
+Output: [1,2]
+
+Solution: O(N), space: O(1)
+    vector<int> twoSum(vector<int>& numbers, int target) {
+        int l = 0, r = numbers.size()-1;
+        while (l < r) {
+            int sum = numbers[l] + numbers[r];
+            if (sum == target) {
+                return {l+1,r+1};
+            }
+            else if (sum < target)
+                l++;
+            else
+                r--;
+        }
+        return {};
+    }
+ 
+2. https://leetcode.com/problems/two-sum-iii-data-structure-design/
+Design and implement a TwoSum class. It should support the following operations: add and find.
+add - Add the number to an internal data structure.
+find - Find if there exists any pair of numbers which sum is equal to the value.
+add(1); add(3); add(5);
+find(4) -> true
+find(7) -> false
+
+Solution: add: O(1), find: O(N). Space: O(N)
+We build a frequency hashtable with the number as key and the frequency of the number as the value in the table.
+For the find(value) function, we then iterate through the hashtable over the keys. 
+For each key (number), we check if there exists a complement (value - number) in the table. 
+If so, we could terminate the loop and return the result.
+In a particular case, where the number and its complement are equal, 
+we then need to check if there exists at least two copies of the number in the table.
+
+unordered_map<int,int> hash;
+    int low, up;
+    
+    TwoSum() {
+        low = INT_MAX;
+        up = INT_MIN;
+    }
+    
+    /** Add the number to an internal data structure.. */
+    void add(int number) {
+        hash[number]++;
+        low = min(low, number);
+        up = max(up, number);
+    }
+    
+    /** Find if there exists any pair of numbers which sum is equal to the value. */
+    bool find(int value) {
+        if(hash.empty()) return false;
+        if (value < low*2) return false;
+        if (value > 2*up) return false;
+        for (auto it:hash) {
+            long complement = value - it.first;
+            if (complement != it.first) {
+                if (hash.count(complement))
+                    return true;
+            }
+            else {
+                if (it.second > 1)
+                    return true;
+            }
+        }
+        return false;
+    }
+    
+  
+ 3. https://www.geeksforgeeks.org/count-the-triplets-such-that-ai-bj-ck/?ref=rp
+ Given three array A[], B[] and C[] of N integers each. The task is to find the count of triplets (A[i], B[j], C[k])
+ such that A[i] < B[j] < C[k].
+
+Input: A[] = {1, 5}, B[] = {2, 4}, C[] = {3, 6}
+Output: 3
+Triplets are (1, 2, 3), (1, 4, 6) and (1, 2, 6)
+Input: A[] = {1, 1, 1}, B[] = {2, 2, 2}, C[] = {3, 3, 3}
+Output: 27
+
+Solution: 
+ Now fix an element say X in array B[] and for each X, 
+ the answer will be the product of the count of elements in array A[] which are less than X and the count of elements in array C[] 
+ which are greater than X. We can compute both of these counts using modified binary search. 
+ 
+ int countLessThan(int arr[n], int key) 
+{ 
+    int l = 0, r = n - 1; 
+    int index = -1; 
+    while (l <= r) { 
+        int m = (l + r) / 2; 
+        if (arr[m] < key) { 
+            l = m + 1; 
+            index = m; 
+        } 
+        else { 
+            r = m - 1; 
+        } 
+    } 
+    return (index + 1); 
+} 
+int countGreaterThan(int arr[n], int key) 
+{ 
+    int l = 0, r = n - 1; 
+    int index = -1; 
+    while (l <= r) { 
+        int m = (l + r) / 2; 
+        if (arr[m] <= key) { 
+            l = m + 1; 
+        } 
+        else { 
+            r = m - 1; 
+            index = m; 
+        } 
+    } 
+    if (index == -1) 
+        return 0; 
+    return (n - index); 
+}  
+int countTriplets(int n, int* a, int* b, int* c) 
+{ 
+    // Sort all three arrays 
+    sort(a, a + n); 
+    sort(b, b + n); 
+    sort(c, c + n); 
+  
+    int count = 0; 
+    // Iterate for all the elements of array B 
+    for (int i = 0; i < n; ++i) { 
+        int current = b[i]; 
+        int a_index = -1, c_index = -1; 
+        int low = countLessThan(a, n, current); 
+        int high = countGreaterThan(c, n, current); 
+  
+        // Update the count 
+        count += (low * high); 
+    } 
+    return count; 
+} 
+  
+ 
+4. https://leetcode.com/problems/two-sum-iv-input-is-a-bst/
+Given a Binary Search Tree and a target number, 
+return true if there exist two elements in the BST such that their sum is equal to the given target.
+Input: 
+    5
+   / \
+  3   6
+ / \   \
+2   4   7
+Target = 9
+Output: True
+ 
+Solution: 
+We know that the inorder traversal of a BST gives the nodes in ascending order. 
+Thus, we do the inorder traversal of the given tree and put the results in a listlist which contains the nodes sorted in ascending order.
+void helper(TreeNode* node, vector<int> &vec) {
+        if (node == NULL) return;
+        helper(node->left, vec);
+        vec.push_back(node->val);
+        helper(node->right, vec);
+    }
+    
+    bool findTarget(TreeNode* root, int k) {
+        vector<int> vec;
+        helper(root, vec);    
+        int l = 0, r = vec.size()-1;
+        while (l < r) {
+            int sum = vec[l]+vec[r];
+            if (sum == k)
+                return true;
+            else if (sum < k)
+                l++;
+            else
+                r--;
+        }
+        return false;
+    }
+ 
+ 
+   
+   
