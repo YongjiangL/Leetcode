@@ -1,0 +1,179 @@
+https://leetcode.com/problems/two-sum/
+1. Two sum
+Given an array of integers, return indices of the two numbers such that they add up to a specific target.
+You may assume that each input would have exactly one solution, and you may not use the same element twice.
+Input: [2, 7, 11, 15], 9
+Output: [0, 1]
+
+Solution: Time: O(N), Space: O(N)
+While we iterate, we insert elements into the table, 
+and we also look back to check if current element's complement exists in the table.
+If yes, we have found a solution and return immediately.
+
+vector<int> twoSum(vector<int>& nums, int target) {
+        unordered_map<int,int> hash;
+        int i = 0;
+        for (int v:nums) {
+            if (hash.count(target-v))
+                return {hash[target-v], i};
+            hash[v] = i;
+            i++;
+        }
+        return {};
+    }
+
+
+2. https://leetcode.com/problems/3sum/
+Given an array nums of n integers, are there elements a, b, c in nums such that a + b + c = 0? 
+Find all unique triplets in the array which gives the sum of zero.
+The solution set must not contain duplicate triplets.
+Input: [-1, 0, 1, 2, -1, -4],
+Output: [
+  [-1, 0, 1],
+  [-1, -1, 2]
+]
+
+Solution: For every element, we check if there is a pair whose sum is equal to the negative value of that element.
+Sort the array in increasing order.
+Traverse the array from start to end.
+For every index i, create two points l = i + 1 and r = n – 1
+Run a loop until l is less than r, if the sum of array[l], array[r] is equal to zero then print the triplet 
+If the sum is less than zero then increment value of l, 
+If the sum is greater than zero then decrement value of r,
+
+vector<vector<int>> threeSum(vector<int>& nums) {
+        vector<vector<int>> res;
+        sort(nums.begin(), nums.end());
+        for (int i = 0; i < nums.size(); i++) {
+            if (i > 0 && nums[i-1] == nums[i]) continue;
+            int target = -nums[i];
+            if (target < 0) break;
+            int l = i+1;
+            int r = nums.size()-1;
+            while (l < r) {
+                int sum = nums[l]+nums[r];
+                if (sum <  target)
+                    l++;
+                else if (sum > target)
+                    r--;
+                else {
+                    res.push_back({nums[i], nums[l], nums[r]});
+                    while (l < r && nums[l] == nums[l+1]) l++;
+                    while (l < r && nums[r-1] == nums[r]) r--;
+                    l++;
+                    r--;
+                }
+            }
+        }
+        return res;
+    }
+    
+3. https://leetcode.com/problems/3sum-smaller/
+Given an array of n integers nums and a target, find the number of index triplets i, j, k with 0 <= i < j < k < n 
+that satisfy the condition nums[i] + nums[j] + nums[k] < target.
+
+Input: [-2,0,1,3], 2
+Output: 2 
+Explanation: [-2,0,1], [-2,0,3]
+
+Solution: Time: O(N^2), Space: O(1)
+We sort the array first, then we could apply binary search to find the largest index r such that nums[l] + nums[r] < target for each l.
+Once we found that largest index r, we know there must be r-l pairs that satisfy the above condition with i's value fixed.
+
+int threeSumSmaller(vector<int>& nums, int target) {
+        sort(nums.begin(), nums.end());
+        int cnt = 0;
+        int n = nums.size();
+        for (int i = 0; i < n; i++) {
+            int dif = target-nums[i];
+            int l = i+1, r = n-1;
+            while (l < r) {
+                int sum = nums[l] + nums[r];
+                if (sum < dif) {
+                    cnt += (r-l);
+                    l++;
+                }
+                else {
+                    r--;
+                }
+            }
+        }
+        return cnt;
+    }
+
+
+4. https://leetcode.com/problems/3sum-closest/
+Given an array nums of n integers and an integer target, find three integers in nums such that the sum is closest to target.
+Return the sum of the three integers. You may assume that each input would have exactly one solution.
+Input: [-1, 2, 1, -4], 1.
+Output: 2, Explanation (-1 + 2 + 1 = 2).
+
+Solution: Time: O(N^2)
+int threeSumClosest(vector<int>& nums, int target) {
+        sort(nums.begin(), nums.end());
+        int n = nums.size();
+        int res, dif = INT_MAX;
+        for (int i = 0; i < n-2; i++) {
+            int T = target - nums[i];
+            int l = i+1, r = n-1;
+            while (l < r) {
+                int sum = nums[l] + nums[r];
+                if (sum == T)
+                    return target;
+                else if (sum > T)
+                    r--;
+                else
+                    l++;
+                if (dif > abs(sum-T)) {
+                    dif = abs(sum-T);
+                    res = sum + nums[i];
+                }
+            }
+        }
+        return res;
+    }
+    
+5. https://leetcode.com/problems/4sum/
+Given an array nums of n integers and an integer target, are there elements a, b, c, and d in nums such that a + b + c + d = target?
+Find all unique quadruplets in the array which gives the sum of target.
+The solution set must not contain duplicate quadruplets.
+Input: [1, 0, -1, 0, -2, 2], 0.
+Output: [
+  [-1,  0, 0, 1],
+  [-2, -1, 1, 2],
+  [-2,  0, 0, 2]
+]
+
+Solution: Time, O(N^3)
+vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        vector<vector<int>> res;
+        sort(nums.begin(), nums.end());
+        int n = nums.size();
+        for (int i = 0; i < n-3; i++) {
+            if (i > 0 && nums[i] == nums[i-1]) continue;
+            if(nums[i]+nums[i+1]+nums[i+2]+nums[i+3] > target) break;
+            if(nums[i]+nums[n-1]+nums[n-2]+nums[n-3] < target) continue;
+            for (int j = i+1; j < n-2; j++) {
+                int l = j+1, r = n-1;
+                int T = target - (nums[i]+nums[j]);
+                while (l < r) {
+                    int sum = nums[l] + nums[r];
+                    if (sum == T) {
+                        res.push_back({nums[i], nums[j], nums[l], nums[r]});
+                        while (l < r && nums[l] == nums[l+1]) l++;
+                        while (l < r && nums[r-1] == nums[r]) r--;
+                        l++;
+                        r--;
+                    }
+                    else if (sum > T)
+                        r--;
+                    else
+                        l++;
+                }
+                while (j+1 < n && nums[j] == nums[j+1]) j++;
+            }
+        }
+        return res;
+    }
+ 
+ 
