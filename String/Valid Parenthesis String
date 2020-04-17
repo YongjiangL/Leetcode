@@ -13,3 +13,25 @@ Output: True
 Input: "(*))"
 Output: True
 
+Edge cases:
+1) a string consists of all '*'
+2) a string has no '*'
+
+Solution: Greedy
+Let lo, hi  be the smallest and largest possible number of open left brackets after processing the current character in the string.
+If we encounter a left bracket (c == '('), then lo++, otherwise we could write a right bracket, so lo--. 
+If we encounter what can be a left bracket (c != ')'), then hi++, otherwise we must write a right bracket, so hi--. 
+If hi < 0, then the current prefix can't be made valid no matter what our choices are. 
+Also, we can never have less than 0 open left brackets. At the end, we should check that we can have exactly 0 open left brackets.
+
+bool checkValidString(string s) {
+        int lo = 0, hi = 0;
+        for (auto c:s) {
+            c == '(' ? lo++ : lo--;
+            c == ')' ? hi-- : hi++;
+            if (hi < 0)
+                return false;
+            lo = max(lo, 0);
+        }
+        return lo == 0;
+    }
