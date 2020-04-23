@@ -1,0 +1,26 @@
+https://leetcode.com/problems/bitwise-and-of-numbers-range/
+Given a range [m, n] where 0 <= m <= n <= 2147483647, return the bitwise AND of all numbers in this range, inclusive.
+Input: [5,7]
+Output: 4
+Input: [0,1]
+Output: 0
+
+Solution:
+first we could represent each number in the range in its binary form which we could view as a string of binary numbers.
+after the AND operation on all the numbers, the remaining part of bit strings is the common prefix of all these bit strings.
+More specifically, the common prefix of all these bit string is also the common prefix between the starting and ending numbers of the specified range.
+
+The idea is that we shift both numbers to the right, until the numbers become equal.
+Then we append zeros to the common prefix in order to obtain the desired result, by shifting the common prefix to the left.
+
+Time: O(N), Space: O(N)
+int rangeBitwiseAnd(int m, int n) {
+        int shift = 0;
+        //find the common 1-bits
+        while (m < n) {
+            m >>= 1;
+            n >>= 1;
+            shift++;
+        }
+        return m << shift;
+    }
