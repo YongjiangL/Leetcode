@@ -1,0 +1,66 @@
+https://leetcode.com/problems/maximum-sum-circular-subarray/
+https://www.geeksforgeeks.org/maximum-contiguous-circular-sum/
+
+Given n numbers, arranged in a circle, fnd the maximum sum of consecutive number.
+Input: a[] = {8, -8, 9, -9, 10, -11, 12}
+Output: 22 (12 + 8 - 8 + 9 - 9 + 10)
+
+Input: a[] = {10, -3, -4, 7, 6, 5, -4, -1} 
+Output:  23 (7 + 6 + 5 - 4 -1 + 10) 
+
+Input: a[] = {-1, 40, -14, 7, 6, 5, -4, -1}
+Output: 52 (7 + 6 + 5 - 4 - 1 - 1 + 40)
+
+Case 1: The elements that contribute to the maximum sum are arranged such that no wrapping is there.
+Examples: {-10, 2, -1, 5}, {-2, 4, -1, 4, -1}. In this case, Kadane’s algorithm will produce the result.
+Case 2: The elements which contribute to the maximum sum are arranged such that wrapping is there. 
+Examples: {10, -12, 11}, {12, -5, 4, -8,11}. 
+
+Solution:
+Subarrays of circular arrays can be classified as either as one-interval subarrays (which we can use Kadane's algorithm), 
+or two-interval subarrays.
+We can modify Kadane's algorithm to use min instead of max. All the math in our explanation of Kadane's algorithm remains the same,
+but the algorithm lets us find the minimum sum of a subarray instead.
+
+For a two interval subarray written as (\sum_{k=0}^{N-1} A_k) - (\sum_{k=i+1}^{j-1} A_k), 
+we can use our kadane-min algorithm to minimize the "interior" (\sum_{k=i+1}^{j-1} A_k) part of the sum.
+Because the interior [i+1, j-1] must be non-empty, we can break up our search into a search on A[1:] and on A[:-1].
+
+public int maxSubarraySumCircular(int[] A) {
+        int max = Integer.MIN_VALUE, min = Integer.MAX_VALUE;
+        int sum1 = 0, sum2 = 0, total = 0;
+        for(int x : A) {
+            if(sum1<0){
+                sum1 = 0;
+            }
+            sum1 += x;
+            max = Math.max(max, sum1);
+            if(sum2>0){
+                sum2 = 0;
+            }
+            sum2 += x;
+            min = Math.min(min, sum2);
+            total += x;
+        }
+        return max > 0 ? Math.max(max, total - min) : max;
+    }
+    
+    public int maxSubarraySumCircular1(int[] A) {
+        int N = A.length;
+        int[] B = new int[2*N+1];
+        for (int i = 0; i < 2*N; ++i)
+            B[i+1] = B[i] + A[i%N];
+        int res = A[0];
+        Deque<Integer> de = new ArrayDeque();
+        de.offerLast(0);
+        for (int j = 1; j <= 2*N; j++) {
+            if (de.peekFirst() < j-N)
+                de.pollFirst();
+            
+            res = Math.max(res, B[j] - B[de.peekFirst()]);
+            while (!de.isEmpty() && B[j] <= B[de.peekLast()])
+                de.pollLast();
+            de.offerLast(j);
+        }
+        return res;
+    }
