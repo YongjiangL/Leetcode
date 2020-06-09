@@ -31,3 +31,8 @@ public boolean isSubsequence(String s, String t) {
         }
         return true;
     }
+
+
+Follow up:
+build a Trie of incoming S. Assume s1 is the prefix of s2, we can use the last matching index of s1 in t, 
+to continue match the remaining part of s2.
