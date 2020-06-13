@@ -1,0 +1,42 @@
+Given an array the task is to largest divisible subset in array. A subset is called divisible if for every pair (x, y) in subset, 
+either x divides y or y divides x.
+
+Input  : arr[] = {1, 16, 7, 8, 4}
+Output : 16 8 4 1
+Input  : arr[] = {2, 4, 3, 8}
+Output : 8 4 2
+
+Solution:
+Sort all array elements in increasing order. The purpose of sorting is to make sure that all divisors of an element appear before it.
+Create an array dp[] of same size as input array. dp[i] stores size of divisible subset ending with arr[i] (In sorted array). 
+The minimum value of dp[i] would be 1.
+Traverse all array elements. For every element, find a divisor arr[j] with largest value of dp[j] and store the value of dp[i] as dp[j] + 1.
+
+ public List<Integer> largestDivisibleSubset(int[] nums) {
+        if (nums.length == 0) return Collections.emptyList();;
+        int n = nums.length;
+        Arrays.sort(nums);
+        
+        int[] pre = new int[n];
+        int[] dp = new int[n];
+        Arrays.fill(dp, 1);
+        int max = 0;
+        for (int i = 1; i < n; i++) {
+            for (int j = 0; j < i; j++) {
+                if (nums[i] % nums[j] == 0 && dp[i] < dp[j] + 1) {
+                    dp[i] = dp[j] + 1;
+                    pre[i] = j;
+                }
+            }
+            if (dp[i] > dp[max])
+                max = i;
+        }
+        List<Integer> res = new ArrayList();
+        int k = max;
+        int i = dp[max];
+        while (i-- > 0) {
+            res.add(nums[k]);
+            k = pre[k];
+        }
+        return res;
+    }
