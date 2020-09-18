@@ -1,0 +1,113 @@
+https://leetcode.com/problems/count-submatrices-with-all-ones/
+https://www.geeksforgeeks.org/number-of-submatrices-with-all-1s/
+
+Given a rows * columns matrix mat of ones and zeros, return how many submatrices have all ones.
+Input: mat = [[0,1,1,0],
+              [0,1,1,1],
+              [1,1,1,0]]
+Output: 24
+Explanation:
+There are 8 rectangles of side 1x1.
+There are 5 rectangles of side 1x2.
+There are 2 rectangles of side 1x3. 
+There are 4 rectangles of side 2x1.
+There are 2 rectangles of side 2x2. 
+There are 2 rectangles of side 3x1. 
+There is 1 rectangle of side 3x2. 
+Total number of rectangles = 8 + 5 + 2 + 4 + 2 + 2 + 1 = 24.
+Input: mat = [[1,1,1,1,1,1]]
+Output: 21
+
+Solution:
+1) consider how to count number of all 1 subvectors. For a subvector in size length with 1, it contains length of different answers.
+int numOfOneRow(int[] row) {
+        int ans = 0, length = 0;
+        for (int v:row) {
+            length = (v == 0 ? 0:length+1);
+            ans += length;
+        }
+        return ans;
+    }
+    
+2) Now we sovle 2D matrix by finding all 1 submatrix from row up to down, and use the 1D helper function. 
+We create an array dp, if dp[k] == 1 means all values in column k from row up to down are all 1 (we use &).
+Overall, the idea is compress the 2D array to 1D array, then apply 1D helper function. 
+Time complexity: O(M^2*N), space complexity: O(N)
+public int numSubmat(int[][] mat) {
+        int M = mat.length, N = mat[0].length;
+        int ans = 0;
+        for (int up = 0; up < M; up++) {
+            int[] dp = new int[N];
+            Arrays.fill(dp, 1);
+            for (int down = up; down < M; down++) {
+                for (int k = 0; k < N; k++) 
+                    dp[k] &= mat[down][k];
+                ans += numOfOneRow(dp);
+            }
+        }
+        return ans;
+    }
+    
+    int numOfOneRow(int[] row) {
+        int ans = 0, length = 0;
+        for (int v:row) {
+            length = (v == 0 ? 0:length+1);
+            ans += length;
+        }
+        return ans;
+    }
+    
+    
+3)Optimize O(M * N) by Using Stack
+Now in the code, the h[j] means: number of continius 1 in column j from row i up to row 0. By using mono-stack, 
+what we want to achieve is to find the first previous index "preIndex", whose number of continuous 1 is less than current column index i. 
+And the value of index between preIndex and i are all equal or larger than index i. So it can form a big sub-metrics.
+Note: sum[i] means the number of submatrices with the column "i" as the right border.
+If stack is empty, meaning: all previous columns has more/equal ones than current column. So, the number of metrics can form is simply A[i] * (i + 1); (0-index)
+If stack is not empty, meaning: there is a shorter column which breaks our road. Now, the number of metrics can form is sum[i] += A[i] * (i - preIndex). 
+And plus, we can form a longer submetrics with that previou shorter column sum[preIndex].
+The best way to understand is to draw a graph.
+Graph: https://assets.leetcode.com/users/images/9f722cb2-f223-4acf-9883-74fa020fef17_1593925126.526302.png
+
+public int numSubmat(int[][] mat) {
+        
+	int M = mat.length, N = mat[0].length;
+
+	int res = 0;
+
+	int[] h = new int[N];
+	for (int i = 0; i < M; ++i) {
+		for (int j = 0; j < N; ++j) {
+			h[j] = (mat[i][j] == 0 ? 0 : h[j] + 1);
+		}
+		res += helper(h);
+	}
+
+	return res;
+}
+
+private int helper(int[] A) {
+
+	int[] sum = new int[A.length];
+	Stack<Integer> stack = new Stack<>();
+
+	for (int i = 0; i < A.length; ++i) {
+
+		while (!stack.isEmpty() && A[stack.peek()] >= A[i]) stack.pop();
+
+		if (!stack.isEmpty()) {
+			int preIndex = stack.peek();
+			sum[i] = sum[preIndex];
+			sum[i] += A[i] * (i - preIndex);
+		} else {
+			sum[i] = A[i] * (i + 1);
+		}
+
+		stack.push(i);
+	}
+
+	int res = 0;
+	for (int s : sum) res += s;
+
+	return res;
+}
