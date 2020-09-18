@@ -1,0 +1,52 @@
+https://leetcode.com/problems/maximal-rectangle/
+Given a rows x cols binary matrix filled with 0's and 1's, find the largest rectangle containing only 1's and return its area.
+Input: matrix = [["1","0","1","0","0"],["1","0","1","1","1"],["1","1","1","1","1"],["1","0","0","1","0"]]
+Output: 6
+Input: matrix = []
+Output: 0
+
+Solution:
+Similar to https://leetcode.com/problems/count-submatrices-with-all-ones/.
+1) Consider 1D array, we count number of subarray with 1, that's we look for maximum length of subarray.
+int maxLengthOfRow(int[] dp) {
+        int length = 0, max = 0;
+        for (int v:dp) {
+            length = (v == 0 ? 0:length+1);
+            max = Math.max(max, length);
+        }
+        return max;
+    }
+    
+ 2) Now, for 2D array, we look for all 1 submatrix from row up to down. 
+ We create an array dp, dp[k] == 1 means all values in column k from row up-down are all 1s. 
+So to find the maximal rectangle, the area is height*width, where height = down-up+1, width = maximum lenght of subarray in dp with all 1s.
+Time complexity is O(M^2*N), space is O(N).
+
+
+public int maximalRectangle(char[][] matrix) {
+        if (matrix.length <= 0 || matrix[0].length <= 0)
+            return 0;
+        int M = matrix.length, N = matrix[0].length;
+        int ans = 0;
+        for (int up = 0; up < M; up++) {
+            int[] dp = new int[N];
+            Arrays.fill(dp, 1);
+            for (int down = up; down < M; down++) {
+                for (int k = 0; k < N; k++) 
+                    dp[k] &= (matrix[down][k]-'0');
+                int length = maxLengthOfRow(dp);
+                ans = Math.max(ans, length*(down-up+1));
+            }
+        }
+        return ans;
+    }
+    
+    int maxLengthOfRow(int[] dp) {
+        int length = 0, max = 0;
+        for (int v:dp) {
+            length = (v == 0 ? 0:length+1);
+            max = Math.max(max, length);
+        }
+        return max;
+    }
+
